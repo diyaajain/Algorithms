@@ -7,13 +7,13 @@
 using std::vector;
 using std::min;
 
-int minDifference(vector <int>& sequence, vector<vector<int>>& matrix){
+int minDifference(vector <int>& sequence, vector<vector<int> >& matrix){
     int m = matrix.size();
     int n = matrix[0].size();
     int k = sequence.size();
 
     //dp table to store the minimum absolute differnce for each (r, c, k)
-    vector<vector<vector<int>>> dp((m, vector<vector<int>>(n, vector<int>(k, INT_MAX))));
+    vector<vector<vector<int> > > dp( m, vector<vector<int> >(n, vector<int>(k, INT_MAX)));
 
     //absolute difference at the start
     for (int r = 0; r < m; r++){
@@ -38,12 +38,13 @@ int minDifference(vector <int>& sequence, vector<vector<int>>& matrix){
         }
     }
     
-    int cur = INT_MAX;
+    int minDifference = INT_MAX;
     for (int r = 0; r < m; r++){
         for (int c = 0; c < n; c++){
-            cur = min(cur, dp[r][c][k-1]);
+            minDifference = min(minDifference, dp[r][c][k-1]);
         }
     }
+    return minDifference;
 }
 
 
@@ -57,7 +58,7 @@ int main(){
     file >> k >> m >> n;
 
     std::vector<int> sequence(k);
-    std::vector<std::vector<int>> matrix(m, std::vector<int>(n));
+    std::vector<std::vector<int> > matrix(m, std::vector<int>(n));
 
     //read the sequence
     for (int i = 0; i < k; i++){
@@ -70,6 +71,17 @@ int main(){
             file >> matrix[i][j];
         }
     }
+
+    //output results
+    std::ofstream output("output.txt");
+    if (!output){
+        return EXIT_FAILURE;
+    }
+    
+    // output << "minScore" << std::endl;
+    // output << "start_position" << std::endl;
+
+    output.close();
     
     file.close();
     return 0;
