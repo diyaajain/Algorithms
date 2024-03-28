@@ -1,29 +1,30 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
+#include <fstream>
+#include <vector>
 
 int main(){
-    FILE *file;
+    std::ifstream file("input.txt");
+    if (!file){
+        return 1;
+    }
     int k, m, n;
-    val sequence;  //have to redefine
-    //define matrix
+    file >> k >> m >> n;
 
-    //open file for reading
-    file = fopen("input.txt", "r");
-    
-    fscanf(file, "%d %d %d", &k, &m, &n);
+    std::vector<int> sequence(k);
+    std::vector<std::vector<int>> matrix(m, std::vector<int>(n));
 
     //read the sequence
     for (int i = 0; i < k; i++){
-        fscanf(file, "%d", sequence[i]);
+        file >> sequence[i];
     }
 
-    //read the matrx
+    //read the matrix
     for (int i = 0;  i < m; i++){
         for (int j = 0; j < n; j++){
-            fscanf(file, "%d", matrix[i][j]);
+            file >> matrix[i][j];
         }
     }
     
-    fclose(file);
+    file.close();
     return 0;
 }
