@@ -40,7 +40,7 @@ int minDifference(vector <int>& sequence, vector<vector<int> >& matrix){
         }
     }
     
-    //trying to get the best absolute different
+    //trying to get the best absolute different (not sure if this is the right way to do)
     int minDifference = INT_MAX;
     for (int r = 0; r < m; r++){
         for (int c = 0; c < n; c++){
