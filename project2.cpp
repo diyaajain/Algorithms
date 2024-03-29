@@ -15,15 +15,17 @@ int minDifference(vector <int>& sequence, vector<vector<int> >& matrix){
     //dp table to store the minimum absolute differnce for each (r, c, k)
     vector<vector<vector<int> > > dp( m, vector<vector<int> >(n, vector<int>(k, INT_MAX)));
 
-    //absolute difference at the start
+    //initialize the DP array for the first sequence element 
     for (int r = 0; r < m; r++){
         for (int c = 0; c < n; c++){
             dp[r][c][0] = std::abs(sequence[0] - matrix[r][c]); 
         }
     }
 
-    //for each element, pick one from 4 directions
+    //iterate over each element in the sequence
     for (int i = 1; i < k; i++){
+        /*for each position in the matrix, update the DP state by 
+        considering absolute difference score from all possible previous positions*/
         for (int r = 0; r < m; r++){
             for (int c = 0; c < n; c++){
                 if (r > 0)
@@ -38,6 +40,7 @@ int minDifference(vector <int>& sequence, vector<vector<int> >& matrix){
         }
     }
     
+    //trying to get the best absolute different
     int minDifference = INT_MAX;
     for (int r = 0; r < m; r++){
         for (int c = 0; c < n; c++){
@@ -46,7 +49,6 @@ int minDifference(vector <int>& sequence, vector<vector<int> >& matrix){
     }
     return minDifference;
 }
-
 
 int main(){
     //read input
