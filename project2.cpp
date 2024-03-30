@@ -55,18 +55,17 @@ int minDifference(vector<int>& sequence, vector<vector<int> >& matrix) {
     int startRow, startCol;
 
     // Find the minimum score and the starting position
-    for (int i = 0; i < k; i++){
-        for (int r = 0; r < m; r++) {
-            for (int c = 0; c < n; c++) {
-                if (dp[r][c][i] < minDifference) {
-                    minDifference = dp[r][c][i];
-                    startRow = r;
-                    startCol = c;
-                    std::cout << "Minimum difference found at row: " << startRow << ", column: " << startCol << std::endl;
-                }
+    for (int r = 0; r < m; r++) {
+        for (int c = 0; c < n; c++) {
+            if (dp[r][c][0] < minDifference) {
+                minDifference = dp[r][c][0];
+                startRow = r;
+                startCol = c;
+                std::cout << "Minimum difference found at row: " << startRow << ", column: " << startCol << " " << dp[r][c][0] << std::endl;
             }
         }
     }
+
     
     // Output the directions
     vector<char> directions;
@@ -116,7 +115,7 @@ int minDifference(vector<int>& sequence, vector<vector<int> >& matrix) {
 }
 
 int main() {
-    std::ifstream file("input2.txt");
+    std::ifstream file("input.txt");
     if (!file) {
         std::cerr << "Error opening input file.\n";
         return 1;
