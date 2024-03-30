@@ -3,88 +3,122 @@
 #include <vector>
 #include <climits>
 #include <cmath>
+#include <algorithm>
 
 using std::vector;
 using std::min;
 
-int minDifference(vector <int>& sequence, vector<vector<int> >& matrix){
-    int m = matrix.size();
-    int n = matrix[0].size();
-    int k = sequence.size();
+// Function to calculate the minimum absolute difference between a sequence and a matrix
+int minDifference(vector<int>& sequence, vector<vector<int> >& matrix) {
+    int m = matrix.size(); // Number of rows in the matrix
+    int n = matrix[0].size(); // Number of columns in the matrix
+    int k = sequence.size(); // Size of the sequence
 
-    //dp table to store the minimum absolute differnce for each (r, c, k)
-    vector<vector<vector<int> > > dp( m, vector<vector<int> >(n, vector<int>(k, INT_MAX)));
+    // Dynamic programming table to store the minimum absolute difference for each (row, column, sequence index) combination
+    vector<vector<vector<int> > > dp(m, vector<vector<int> >(n, vector<int>(k, INT_MAX)));
 
-    //initialize the DP array for the first sequence element 
-    for (int r = 0; r < m; r++){
-        for (int c = 0; c < n; c++){
-            dp[r][c][0] = std::abs(sequence[0] - matrix[r][c]); 
+    // Initialize the DP table for the first sequence element
+    for (int r = 0; r < m; r++) {
+        for (int c = 0; c < n; c++) {
+            dp[r][c][0] = std::abs(sequence[0] - matrix[r][c]);
         }
     }
 
-    //iterate over each element in the sequence
-    for (int i = 1; i < k; i++){
-        /*for each position in the matrix, update the DP state by 
-        considering absolute difference score from all possible previous positions*/
-        for (int r = 0; r < m; r++){
-            for (int c = 0; c < n; c++){
+    // Iterate over each element in the sequence
+    for (int i = 1; i < k; i++) {
+        // For each position in the matrix, update the DP state by considering absolute difference scores from all possible previous positions
+        for (int r = 0; r < m; r++) {
+            for (int c = 0; c < n; c++) {
                 if (r > 0)
-                    dp[r][c][i] = min(dp[r][c][i], dp[r-1][c][i-1] + std::abs(sequence[i] - matrix[r][c]));
-                if (r < m-1)
-                    dp[r][c][i] = min(dp[r][c][i], dp[r+1][c][i-1] + std::abs(sequence[i] - matrix[r][c]));
+                    dp[r][c][i] = min(dp[r][c][i], dp[r - 1][c][i - 1] + std::abs(sequence[i] - matrix[r][c]));
+                if (r < m - 1)
+                    dp[r][c][i] = min(dp[r][c][i], dp[r + 1][c][i - 1] + std::abs(sequence[i] - matrix[r][c]));
                 if (c > 0)
-                    dp[r][c][i] = min(dp[r][c][i], dp[r][c-1][i-1] + std::abs(sequence[i] - matrix[r][c]));
-                if (c < n-1)
-                    dp[r][c][i] = min(dp[r][c][i], dp[r][c+1][i-1] + std::abs(sequence[i] - matrix[r][c]));
+                    dp[r][c][i] = min(dp[r][c][i], dp[r][c - 1][i - 1] + std::abs(sequence[i] - matrix[r][c]));
+                if (c < n - 1)
+                    dp[r][c][i] = min(dp[r][c][i], dp[r][c + 1][i - 1] + std::abs(sequence[i] - matrix[r][c]));
             }
         }
     }
-    
-    //trying to get the best absolute different (not sure if this is the right way to do)
+
     int minDifference = INT_MAX;
-    for (int r = 0; r < m; r++){
-        for (int c = 0; c < n; c++){
-            minDifference = min(minDifference, dp[r][c][k-1]);
+    int startRow = -1, startCol = -1;
+
+    // Find the minimum score and the starting position
+    for (int r = 0; r < m; r++) {
+        for (int c = 0; c < n; c++) {
+            if (dp[r][c][k - 1] < minDifference) {
+                minDifference = dp[r][c][k - 1];
+                startRow = r;
+                startCol = c;
+            }
         }
     }
-    return minDifference;
-}
 
-int main(){
-    //read input
-    std::ifstream file("input.txt");
-    if (!file){
+    // Output the directions
+    vector<char> directions;
+    int currRow = startRow, currCol = startCol;
+    for (int i = k - 1; i > 0; i--) {
+        if (currRow > 0 && dp[currRow][currCol][i] == dp[currRow - 1][currCol][i - 1] + std::abs(sequence[i] - matrix[currRow][currCol])) {
+            directions.push_back('U');
+            currRow--;
+        } else if (currRow < m - 1 && dp[currRow][currCol][i] == dp[currRow + 1][currCol][i - 1] + std::abs(sequence[i] - matrix[currRow][currCol])) {
+            directions.push_back('D');
+            currRow++;
+        } else if (currCol > 0 && dp[currRow][currCol][i] == dp[currRow][currCol - 1][i - 1] + std::abs(sequence[i] - matrix[currRow][currCol])) {
+            directions.push_back('R');
+            currCol--;
+        } else if (currCol < n - 1 && dp[currRow][currCol][i] == dp[currRow][currCol + 1][i - 1] + std::abs(sequence[i] - matrix[currRow][currCol])) {
+            directions.push_back('L');
+            currCol++;
+        }
+    }
+
+    // Reverse the directions since we started from the end
+    std::reverse(directions.begin(), directions.end());
+
+    // Write output to file
+    std::ofstream output("output.txt");
+    if (!output) {
+        std::cerr << "Error opening output file.\n";
         return 1;
     }
+
+    output << minDifference << std::endl;
+    output << startRow + 1 << " " << startCol + 1 << std::endl;
+    for (char dir : directions) {
+        output << dir << " ";
+    }
+    output << std::endl;
+
+    output.close();
+    return 0;
+}
+
+int main() {
+    std::ifstream file("input.txt");
+    if (!file) {
+        std::cerr << "Error opening input file.\n";
+        return 1;
+    }
+
     int k, m, n;
     file >> k >> m >> n;
 
-    std::vector<int> sequence(k);
-    std::vector<std::vector<int> > matrix(m, std::vector<int>(n));
+    vector<int> sequence(k);
+    vector<vector<int> > matrix(m, vector<int>(n));
 
-    //read the sequence
-    for (int i = 0; i < k; i++){
+    for (int i = 0; i < k; i++) {
         file >> sequence[i];
     }
 
-    //read the matrix
-    for (int i = 0;  i < m; i++){
-        for (int j = 0; j < n; j++){
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
             file >> matrix[i][j];
         }
     }
 
-    //output results
-    std::ofstream output("output.txt");
-    if (!output){
-        return EXIT_FAILURE;
-    }
-    
-    // output << "minScore" << std::endl;
-    // output << "start_position" << std::endl;
-
-    output.close();
-    
     file.close();
-    return 0;
+
+    return minDifference(sequence, matrix);
 }
