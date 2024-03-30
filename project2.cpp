@@ -17,26 +17,24 @@ int minDifference(vector<int>& sequence, vector<vector<int> >& matrix) {
     // Dynamic programming table to store the minimum absolute difference for each (row, column, sequence index) combination
     vector<vector<vector<int> > > dp(m, vector<vector<int> >(n, vector<int>(k, INT_MAX)));
 
-    // Initialize the DP table for the first sequence element
-    for (int r = 0; r < m; r++) {
-        for (int c = 0; c < n; c++) {
-            dp[r][c][0] = std::abs(sequence[0] - matrix[r][c]);
-        }
-    }
-
     // Iterate over each element in the sequence
     for (int i = 1; i < k; i++) {
         // For each position in the matrix, update the DP state by considering absolute difference scores from all possible previous positions
         for (int r = 0; r < m; r++) {
             for (int c = 0; c < n; c++) {
+                // Initialize to max value
+                dp[r][c][i] = std::numeric_limits<int>::max();
+                // Calculate absolute difference for the current cell
+                int diff = std::abs(sequence[i] - matrix[r][c]);
                 if (r > 0)
-                    dp[r][c][i] = min(dp[r][c][i], dp[r - 1][c][i - 1] + std::abs(sequence[i] - matrix[r][c]));
+                    dp[r][c][i] = min(dp[r][c][i], dp[r - 1][c][i - 1] + diff);
                 if (r < m - 1)
-                    dp[r][c][i] = min(dp[r][c][i], dp[r + 1][c][i - 1] + std::abs(sequence[i] - matrix[r][c]));
+                    dp[r][c][i] = min(dp[r][c][i], dp[r + 1][c][i - 1] + diff);
                 if (c > 0)
-                    dp[r][c][i] = min(dp[r][c][i], dp[r][c - 1][i - 1] + std::abs(sequence[i] - matrix[r][c]));
+                    dp[r][c][i] = min(dp[r][c][i], dp[r][c - 1][i - 1] + diff);
                 if (c < n - 1)
-                    dp[r][c][i] = min(dp[r][c][i], dp[r][c + 1][i - 1] + std::abs(sequence[i] - matrix[r][c]));
+                    dp[r][c][i] = min(dp[r][c][i], dp[r][c + 1][i - 1] + diff);
+                }
             }
         }
     }
