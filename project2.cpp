@@ -21,7 +21,6 @@ int minDifference(vector<int>& sequence, vector<vector<int> >& matrix) {
     for (int r = 0; r < m; r++) {
         for (int c = 0; c < n; c++) {
             dp[r][c][0] = std::abs(sequence[0] - matrix[r][c]);
-            //std::cout << dp[r][c][0] << std::endl;
         }
     }
 
@@ -32,69 +31,73 @@ int minDifference(vector<int>& sequence, vector<vector<int> >& matrix) {
             for (int c = 0; c < n; c++) {
                 if (r > 0)
                     dp[r][c][i] = min(dp[r][c][i], dp[r - 1][c][i - 1] + std::abs(sequence[i] - matrix[r][c]));
-                    //dp[r][c][i] = dp[r - 1][c][i - 1] + std::abs(sequence[i] - matrix[r][c]);
                 if (r < m - 1)
                     dp[r][c][i] = min(dp[r][c][i], dp[r + 1][c][i - 1] + std::abs(sequence[i] - matrix[r][c]));
-                    //dp[r][c][i] = dp[r + 1][c][i - 1] + std::abs(sequence[i] - matrix[r][c]);
                 if (c > 0)
                     dp[r][c][i] = min(dp[r][c][i], dp[r][c - 1][i - 1] + std::abs(sequence[i] - matrix[r][c]));
-                    //dp[r][c][i] = dp[r][c - 1][i - 1] + std::abs(sequence[i] - matrix[r][c]);
                 if (c < n - 1)
                     dp[r][c][i] = min(dp[r][c][i], dp[r][c + 1][i - 1] + std::abs(sequence[i] - matrix[r][c]));
-                    //dp[r][c][i] = dp[r][c + 1][i - 1] + std::abs(sequence[i] - matrix[r][c]);
-                std::cout << dp[r][c][i] << std::endl;
             }
-            std::cout << " " << std::endl;
         }
-        std::cout << " **" << std::endl;
     }
-    std::cout << " " << std::endl;
 
     int minDifference = INT_MAX;
-    //int startRow = -1, startCol = -1;
     int startRow, startCol;
 
     // Find the minimum score and the starting position
-    for (int r = 0; r < m; r++) {
-        for (int c = 0; c < n; c++) {
-            if (dp[r][c][0] < minDifference) {
-                minDifference = dp[r][c][0];
+    for (int r = 0; r < m; r++){
+        for (int c = 0; c < n; c++){
+            if(minDifference > dp[r][c][k-1]){
+                minDifference = dp[r][c][k-1];
                 startRow = r;
                 startCol = c;
-                std::cout << "Minimum difference found at row: " << startRow << ", column: " << startCol << " " << dp[r][c][0] << std::endl;
+                continue;
+                if(minDifference == 0){
+                    break;
+                }
             }
         }
     }
 
-    
     // Output the directions
-    vector<char> directions;
+    vector<int> minStore(4, INT_MAX);
+    vector<char> directions(k-1);
     int currRow = startRow, currCol = startCol;
-    std::cout << startRow << std::endl;
-    std::cout << startCol << std::endl;
 
-    for (int i = 0; i < k - 1; i++) {
-        int prevDiff = std::abs(sequence[i] - matrix[currRow][currCol]);
-        std::cout << "f" << currRow << std::endl;
-        std::cout << "f" << currCol << std::endl;
-        std::cout << prevDiff << std::endl;
-        if (currRow > 0 && (dp[currRow - 1][currCol][i + 1] == prevDiff + dp[currRow][currCol][i])) {
-            directions.push_back('U'); // Move up
+    //finding which direction to move
+    for (int dir = k - 2; dir >= 0; dir--){
+        if (currRow > 0)
+            minStore[0] = dp[currRow-1][currCol][dir];
+        if (currRow < m - 1)
+            minStore[1] = dp[currRow+1][currCol][dir];
+        if (currCol > 0)
+            minStore[2] = dp[currRow][currCol-1][dir];
+        if (currCol < n - 1)
+            minStore[3] = dp[currRow][currCol+1][dir];
+        int minDirection = *std::min_element(directions.begin(), directions.end());
+
+        /*Here, the directions are printed out differently (opposite direction) than the actual direction
+        because we are going back from bottom to the top*/
+        if (minStore[0] == minDirection) {
+            directions[dir] = 'D'; // Move up
             currRow--;
-        } else if (currRow < m - 1 && (dp[currRow + 1][currCol][i + 1] == prevDiff + dp[currRow][currCol][i])) {
-            directions.push_back('D'); // Move down
+        } else if (minStore[1] == minDirection) {
+            directions[dir] = 'U'; // Move down
             currRow++;
-        } else if (currCol > 0 && (dp[currRow][currCol - 1][i + 1] == prevDiff + dp[currRow][currCol][i])) {
-            directions.push_back('L'); // Move left
+        } else if (minStore[2] == minDirection) {
+            directions[dir] = 'R'; //Move left
             currCol--;
-        } else if (currCol < n - 1 && (dp[currRow][currCol + 1][i + 1] == prevDiff + dp[currRow][currCol][i])) {
-            directions.push_back('R'); // Move right
+        } else if (minStore[3] == minDirection) {
+            directions[dir] = 'L'; // Move right
             currCol++;
+        }
+        for (int i = 0; i < 4; i++){
+            minStore[i] = INT_MAX;
         }
     }
 
-    // Reverse the directions since we started from the end
-    //std::reverse(directions.begin(), directions.end());
+    startRow = currRow;
+    startCol = currCol;
 
     // Write output to file
     std::ofstream output("output.txt");
