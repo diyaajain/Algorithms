@@ -1,3 +1,4 @@
+//run g++ -std=c++17 project2.cpp
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -118,7 +119,7 @@ int minDifference(vector<int>& sequence, vector<vector<int> >& matrix) {
 }
 
 int main() {
-    std::ifstream file("input.txt");
+    std::ifstream file("input1.txt");
     if (!file) {
         std::cerr << "Error opening input file.\n";
         return 1;
