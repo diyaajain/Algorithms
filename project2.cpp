@@ -119,7 +119,7 @@ int minDifference(vector<int>& sequence, vector<vector<int> >& matrix) {
 }
 
 int main() {
-    std::ifstream file("input1.txt");
+    std::ifstream file("input.txt");
     if (!file) {
         std::cerr << "Error opening input file.\n";
         return 1;
