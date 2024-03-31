@@ -53,9 +53,6 @@ int minDifference(vector<int>& sequence, vector<vector<int> >& matrix) {
                 startRow = r;
                 startCol = c;
                 continue;
-                if(minDifference == 0){
-                    break;
-                }
             }
         }
     }
