@@ -7,9 +7,7 @@
 
 1. Place the input maze configuration in the `input.txt` file according to the specified format.
 2. Compile the source code using a C++ compiler supporting C++11 or later. Use the following command to compile:
-
-   ```g++ -std=c++11 main.cpp -o main
-   ```
+   `g++ -std=c++11 main.cpp -o main`
    This will generate an executable named `main`.
 
 3. Run the executable with the following command: ./main
